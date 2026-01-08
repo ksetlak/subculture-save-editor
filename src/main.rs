@@ -229,7 +229,10 @@ impl eframe::App for App {
 }
 
 fn main() -> Result<(), eframe::Error> {
-    let options = eframe::NativeOptions::default();
+    let mut options = eframe::NativeOptions::default();
+    options.viewport.resizable = Some(true);
+    options.viewport.inner_size = Some(egui::Vec2::new(400.0, 700.0));
+    
     eframe::run_native(
         "Subculture Save Editor",
         options,
