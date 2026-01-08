@@ -59,8 +59,16 @@ There's no more magic to that, just simple file editing.
 
 ## Build & Run
 
+### Build
+
 ```bash
-cargo run --release
+cargo build --target x86_64-pc-windows-gnu --release
+```
+
+### ... or run a development build directly from source:
+
+```bash
+cargo run
 ```
 
 Dependencies are managed via Cargo.
