@@ -61,9 +61,29 @@ There's no more magic to that, just simple file editing.
 
 ### Build
 
+#### Windows
+
 ```bash
 cargo build --target x86_64-pc-windows-gnu --release
 ```
+
+#### Linux
+
+```bash
+cargo build --release
+```
+
+```bash
+chmod +x build-linux-static.sh
+build-linux-static.sh
+```
+
+#### MacOS (x86_64)
+#TODO
+
+#### MacOS (AArch64)
+#TODO
+#TODO lipo
 
 ### ... or run a development build directly from source:
 
