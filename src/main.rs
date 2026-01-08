@@ -124,7 +124,8 @@ impl eframe::App for App {
                 });
             }
             
-            egui::ScrollArea::vertical().show(ui, |ui| {
+            let available_height = ui.available_height() - 30.0; // Reserve space for buttons
+            egui::ScrollArea::vertical().max_height(available_height).show(ui, |ui| {
                 ui.horizontal(|ui| {
                     ui.label("Credits: ");
                     if ui.add(egui::DragValue::new(&mut self.credits).speed(100)).changed() {
@@ -238,7 +239,7 @@ fn main() -> Result<(), eframe::Error> {
     options.viewport.inner_size = Some(egui::Vec2::new(400.0, 700.0));
     
     eframe::run_native(
-        "Subculture Save Editor",
+        "Sub Culture Save Editor",
         options,
         Box::new(|_cc| Box::new(App::default())),
     )
