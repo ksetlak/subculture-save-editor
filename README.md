@@ -61,16 +61,23 @@ There's no more magic to that, just simple file editing.
 
 ### Build
 
-#### Windows
+#### All Targets
 
 ```bash
-cargo build --target x86_64-pc-windows-gnu --release
+chmod +x build-all.sh
+./build-all.sh
 ```
 
 #### Linux
 
 ```bash
 cargo build --release
+```
+
+#### Windows
+
+```bash
+cargo build --target x86_64-pc-windows-gnu --release
 ```
 
 ##### Statically-linked binary
