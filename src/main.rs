@@ -10,7 +10,7 @@ struct App {
     hull_strength: f32,
     shields: f32,
     radiation_shields: f32,
-    refined_thorium: i32,
+    cargo: [i32; 19],
     ripper_rounds: i32,
     depth_charges: i32,
     validation_msg: String,
@@ -27,7 +27,7 @@ impl Default for App {
             hull_strength: 0.0,
             shields: 0.0,
             radiation_shields: 0.0,
-            refined_thorium: 0,
+            cargo: [0; 19],
             ripper_rounds: 0,
             depth_charges: 0,
             validation_msg: String::new(),
@@ -53,7 +53,11 @@ impl App {
                 self.depth_charges = i32::from_le_bytes(data[0x7190..0x7194].try_into().unwrap());
                 
                 // Cargo
-                self.refined_thorium = i32::from_le_bytes(data[0x4E24..0x4E28].try_into().unwrap());
+                let cargo_base = 0x4E20;
+                for i in 0..19 {
+                    let off = cargo_base + i * 4;
+                    self.cargo[i] = i32::from_le_bytes(data[off..off + 4].try_into().unwrap());
+                }
                 
                 self.file_path = Some(path);
                 self.validation_msg.clear();
@@ -70,7 +74,11 @@ impl App {
                 data[0x38..0x3C].copy_from_slice(&(self.shields / 10.0).to_le_bytes());
                 data[0x71B0..0x71B4].copy_from_slice(&self.ripper_rounds.to_le_bytes());
                 data[0x7190..0x7194].copy_from_slice(&self.depth_charges.to_le_bytes());
-                data[0x4E24..0x4E28].copy_from_slice(&self.refined_thorium.to_le_bytes());
+                let cargo_base = 0x4E20;
+                for i in 0..19 {
+                    let off = cargo_base + i * 4;
+                    data[off..off + 4].copy_from_slice(&self.cargo[i].to_le_bytes());
+                }
                 if fs::write(path, data).is_ok() {
                     self.save_message_time = Some(Instant::now());
                 }
@@ -151,10 +159,35 @@ impl eframe::App for App {
             
             ui.separator();
             ui.label(egui::RichText::new("Cargo").strong().size(16.0));
-            ui.horizontal(|ui| {
-                ui.label("Refined Thorium: ");
-                ui.add(egui::DragValue::new(&mut self.refined_thorium));
-            });
+
+            let cargo_names = [
+                "Thorium",
+                "Refined Thorium",
+                "Metal",
+                "Processed Metal",
+                "Pearls",
+                "Copper",
+                "Treated Copper",
+                "Oxygen",
+                "Purified Water",
+                "Sea Weed",
+                "Kelp Beer",
+                "Plankton",
+                "Caviar",
+                "Medical Supplies",
+                "Methane",
+                "Tobacco",
+                "Rubber",
+                "Cod Oil",
+                "Lionfish Venom",
+            ];
+
+            for (i, name) in cargo_names.iter().enumerate() {
+                ui.horizontal(|ui| {
+                    ui.label(format!("{}:", name));
+                    ui.add(egui::DragValue::new(&mut self.cargo[i]));
+                });
+            }
             
             ui.separator();
             
