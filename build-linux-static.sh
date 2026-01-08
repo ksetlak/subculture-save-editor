@@ -4,7 +4,7 @@ set -e
 echo "Building Linux binary with podman..."
 
 # Build the Docker image
-podman build -t subculture-builder .
+podman build -f Dockerfile.linux-static -t subculture-builder .
 
 # Create output directory
 mkdir -p dist

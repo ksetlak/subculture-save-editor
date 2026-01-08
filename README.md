@@ -73,17 +73,19 @@ cargo build --target x86_64-pc-windows-gnu --release
 cargo build --release
 ```
 
+##### Statically-linked binary
+
 ```bash
 chmod +x build-linux-static.sh
-build-linux-static.sh
+./build-linux-static.sh
 ```
 
-#### MacOS (x86_64)
-#TODO
+#### MacOS (Universal Binary)
 
-#### MacOS (AArch64)
-#TODO
-#TODO lipo
+```bash
+chmod +x build-macos.sh
+./build-macos.sh
+```
 
 ### ... or run a development build directly from source:
 
