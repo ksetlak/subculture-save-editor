@@ -195,35 +195,37 @@ impl eframe::App for App {
                 ui.colored_label(egui::Color32::RED, &self.validation_msg);
             }
             
-            ui.horizontal(|ui| {
-                let button_text = if self.file_dialog_open { "Opening file..." } else { "Load File (Ctrl+L)" };
-                if ui.add_enabled(!self.file_dialog_open, egui::Button::new(button_text)).clicked() {
-                    self.file_dialog_open = true;
-                    let (sender, receiver) = mpsc::channel();
-                    self.file_receiver = Some(receiver);
-                    std::thread::spawn(move || {
-                        let result = rfd::FileDialog::new().pick_file();
-                        let _ = sender.send(result);
-                    });
-                }
+            ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
+                ui.horizontal(|ui| {
+                    let button_text = if self.file_dialog_open { "Opening file..." } else { "Load File (Ctrl+L)" };
+                    if ui.add_enabled(!self.file_dialog_open, egui::Button::new(button_text)).clicked() {
+                        self.file_dialog_open = true;
+                        let (sender, receiver) = mpsc::channel();
+                        self.file_receiver = Some(receiver);
+                        std::thread::spawn(move || {
+                            let result = rfd::FileDialog::new().pick_file();
+                            let _ = sender.send(result);
+                        });
+                    }
+                    
+                    let save_enabled = self.file_path.is_some() && self.validation_msg.is_empty();
+                    if ui.add_enabled(save_enabled, egui::Button::new("Save (Ctrl+S)")).clicked() || (save_enabled && ctx.input(|i| i.key_pressed(egui::Key::S) && i.modifiers.ctrl)) {
+                        self.save_file();
+                    }
+                });
                 
-                let save_enabled = self.file_path.is_some() && self.validation_msg.is_empty();
-                if ui.add_enabled(save_enabled, egui::Button::new("Save (Ctrl+S)")).clicked() || (save_enabled && ctx.input(|i| i.key_pressed(egui::Key::S) && i.modifiers.ctrl)) {
-                    self.save_file();
+                if let Some(save_time) = self.save_message_time {
+                    let elapsed = save_time.elapsed().as_secs_f32();
+                    if elapsed < 3.0 {
+                        let alpha = (1.0 - elapsed / 3.0).max(0.0);
+                        let color = egui::Color32::from_rgba_unmultiplied(0, 150, 0, (255.0 * alpha) as u8);
+                        ui.colored_label(color, "Changes saved. Enjoy!");
+                        ctx.request_repaint();
+                    } else {
+                        self.save_message_time = None;
+                    }
                 }
             });
-            
-            if let Some(save_time) = self.save_message_time {
-                let elapsed = save_time.elapsed().as_secs_f32();
-                if elapsed < 3.0 {
-                    let alpha = (1.0 - elapsed / 3.0).max(0.0);
-                    let color = egui::Color32::from_rgba_unmultiplied(0, 150, 0, (255.0 * alpha) as u8);
-                    ui.colored_label(color, "Changes saved. Enjoy!");
-                    ctx.request_repaint();
-                } else {
-                    self.save_message_time = None;
-                }
-            }
         });
     }
 }
