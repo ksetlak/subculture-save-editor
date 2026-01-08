@@ -124,70 +124,72 @@ impl eframe::App for App {
                 });
             }
             
-            ui.horizontal(|ui| {
-                ui.label("Credits: ");
-                if ui.add(egui::DragValue::new(&mut self.credits).speed(100)).changed() {
-                    self.validate_credits();
+            egui::ScrollArea::vertical().show(ui, |ui| {
+                ui.horizontal(|ui| {
+                    ui.label("Credits: ");
+                    if ui.add(egui::DragValue::new(&mut self.credits).speed(100)).changed() {
+                        self.validate_credits();
+                    }
+                });
+                
+                ui.separator();
+                ui.label(egui::RichText::new("Ship Parameters").strong().size(16.0));
+                ui.horizontal(|ui| {
+                    ui.label("Hull Strength: ");
+                    ui.add(egui::DragValue::new(&mut self.hull_strength));
+                });
+                ui.horizontal(|ui| {
+                    ui.label("Shields: ");
+                    ui.add(egui::DragValue::new(&mut self.shields));
+                });
+                ui.horizontal(|ui| {
+                    ui.label("Radiation Shields: ");
+                    ui.add(egui::DragValue::new(&mut self.radiation_shields).speed(0.1));
+                });
+                
+                ui.separator();
+                ui.label(egui::RichText::new("Weapon Ammo").strong().size(16.0));
+                ui.horizontal(|ui| {
+                    ui.label("Ripper Rounds: ");
+                    ui.add(egui::DragValue::new(&mut self.ripper_rounds));
+                });
+                ui.horizontal(|ui| {
+                    ui.label("Depth Charges: ");
+                    ui.add(egui::DragValue::new(&mut self.depth_charges));
+                });
+                
+                ui.separator();
+                ui.label(egui::RichText::new("Cargo").strong().size(16.0));
+
+                let cargo_names = [
+                    "Thorium",
+                    "Refined Thorium",
+                    "Metal",
+                    "Processed Metal",
+                    "Pearls",
+                    "Copper",
+                    "Treated Copper",
+                    "Oxygen",
+                    "Purified Water",
+                    "Sea Weed",
+                    "Kelp Beer",
+                    "Plankton",
+                    "Caviar",
+                    "Medical Supplies",
+                    "Methane",
+                    "Tobacco",
+                    "Rubber",
+                    "Cod Oil",
+                    "Lionfish Venom",
+                ];
+
+                for (i, name) in cargo_names.iter().enumerate() {
+                    ui.horizontal(|ui| {
+                        ui.label(format!("{}:", name));
+                        ui.add(egui::DragValue::new(&mut self.cargo[i]));
+                    });
                 }
             });
-            
-            ui.separator();
-            ui.label(egui::RichText::new("Ship Parameters").strong().size(16.0));
-            ui.horizontal(|ui| {
-                ui.label("Hull Strength: ");
-                ui.add(egui::DragValue::new(&mut self.hull_strength));
-            });
-            ui.horizontal(|ui| {
-                ui.label("Shields: ");
-                ui.add(egui::DragValue::new(&mut self.shields));
-            });
-            ui.horizontal(|ui| {
-                ui.label("Radiation Shields: ");
-                ui.add(egui::DragValue::new(&mut self.radiation_shields).speed(0.1));
-            });
-            
-            ui.separator();
-            ui.label(egui::RichText::new("Weapon Ammo").strong().size(16.0));
-            ui.horizontal(|ui| {
-                ui.label("Ripper Rounds: ");
-                ui.add(egui::DragValue::new(&mut self.ripper_rounds));
-            });
-            ui.horizontal(|ui| {
-                ui.label("Depth Charges: ");
-                ui.add(egui::DragValue::new(&mut self.depth_charges));
-            });
-            
-            ui.separator();
-            ui.label(egui::RichText::new("Cargo").strong().size(16.0));
-
-            let cargo_names = [
-                "Thorium",
-                "Refined Thorium",
-                "Metal",
-                "Processed Metal",
-                "Pearls",
-                "Copper",
-                "Treated Copper",
-                "Oxygen",
-                "Purified Water",
-                "Sea Weed",
-                "Kelp Beer",
-                "Plankton",
-                "Caviar",
-                "Medical Supplies",
-                "Methane",
-                "Tobacco",
-                "Rubber",
-                "Cod Oil",
-                "Lionfish Venom",
-            ];
-
-            for (i, name) in cargo_names.iter().enumerate() {
-                ui.horizontal(|ui| {
-                    ui.label(format!("{}:", name));
-                    ui.add(egui::DragValue::new(&mut self.cargo[i]));
-                });
-            }
             
             ui.separator();
             
